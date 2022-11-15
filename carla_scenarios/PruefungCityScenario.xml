@@ -3,12 +3,12 @@
     <scenario name="PruefungCityScenario" type="PruefungCityScenario" town="Town05">
         <!--EGO -->
 
-        <ego_vehicle x=" -17.5646" y="205.124" z="0.5" yaw="0" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <ego_vehicle x=" 24.8" y="118" z="0.5" yaw="90" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
         <!--Vehicle -->
 
-        <other_actor x="-12.014" y="208.58" z="0.5" yaw="0" model="vehicle.volkswagen.t2" rolename="veh1"/>
-        <other_actor x="-31.151" y="201.668" z="2.5" yaw="0" model="vehicle.citroen.c3" rolename="veh2"/>
-        <other_actor x="57.0781" y="188.09" z="0.5" yaw="180" model="vehicle.chevrolet.impala" rolename="veh3"/>
+        <other_actor x="8.2" y="187.7" z="0.5" yaw="180" model="vehicle.ford.mustang" rolename="veh1"/>
+        <other_actor x="-3.8" y="191.3" z="2.5" yaw="180" model="vehicle.citroen.c3" rolename="veh2"/>
+        <!-- <other_actor x="57.0781" y="188.09" z="0.5" yaw="180" model="vehicle.chevrolet.impala" rolename="veh3"/>
         <other_actor x="59.0664" y="195.167" z="0.5" yaw="180" model="vehicle.nissan.patrol" rolename="veh4"/>
         <other_actor x="27.4968" y="145.82" z="0.5" yaw="90" model="vehicle.dodge.charger_2020" rolename="veh5"/>
         <other_actor x="23.857" y="119.132" z="0.5" yaw="90" model="vehicle.mercedes.coupe" rolename="veh6"/>
@@ -16,14 +16,8 @@
         <other_actor x="5.50756" y="94.8561" z="0.5" yaw="0" model="vehicle.seat.leon" rolename="veh8"/>
         <other_actor x="51.3929" y="85.5368" z="0.5" yaw="180" model="vehicle.dodge.charger_police_2020"
                      rolename="veh9"/>
-        <other_actor x="27.751" y="58.9238" z="0.5" yaw="90" model="vehicle.ford.mustang" rolename="veh10"/>
-        <!--
-       <other_actor x="219.944" y="-172.237" z="0.5" yaw="180" model="vehicle.volkswagen.t2" rolename="veh10"/>
-       <other_actor x="233.069" y="-172.237" z="0.5" yaw="180" model="vehicle.mini.cooper_s_2021" rolename="veh11"/>
-       <other_actor x="199.68" y="-226.573" z="0.5" yaw="90" model="vehicle.nissan.patrol" rolename="veh12"/>
-       <other_actor x="169" y="-240.009" z="0.5" yaw="340" model="vehicle.ford.mustang" rolename="veh13"/>
-       <other_actor x="202.41" y="-197.371" z="0.5" yaw="270" model="vehicle.mercedes.sprinter" rolename="veh14"/>
-       -->
+        <other_actor x="27.751" y="58.9238" z="0.5" yaw="90" model="vehicle.ford.mustang" rolename="veh10"/> -->
+
         <!-- Pedestrians -->
         <other_actor x="38.9954" y="157.264" z="0.5" yaw="270" model="walker.pedestrian.0001" rolename="ped1"/>
         <other_actor x="20.7341" y="103.165" z="0.5" yaw="270" model="walker.pedestrian.0020" rolename="ped2"/>
