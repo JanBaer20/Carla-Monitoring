@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<scenarios>
+    <scenario name="MonitorSurroundingsScenario" type="MonitorSurroundingsScenario" town="Town04">
+        <ego_vehicle x="269" y="-246" z="0" yaw="0" model="vehicle.tesla.model3" rolename="hero"/>
+    </scenario>
+</scenarios>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<scenarios>
+    <scenario name="VwScenarioStopIntersection" type="VwScenarioStopIntersection" town="Town05">
+        <!--EGO -->
+        <ego_vehicle x="53.6492" y="1.50764" z="0.5" yaw="0" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <!--Vehicle -->
+        <other_actor x="72.9171" y="5.17194" z="0.5" yaw="0" model="vehicle.volkswagen.t2" rolename="veh1"/>
+        <other_actor x="107.105" y="29.3298" z="0.5" yaw="270" model="vehicle.citroen.c3" rolename="veh2"/>
+        <other_actor x="100.076" y="-28.3866" z="0.5" yaw="90" model="vehicle.chevrolet.impala" rolename="veh3"/>
+        <other_actor x="151.029" y="-22.9784" z="0.5" yaw="90" model="vehicle.bmw.grandtourer" rolename="veh4"/>
+        <other_actor x="155.086" y="28.3453" z="0.5" yaw="270" model="vehicle.dodge.charger_2020" rolename="veh5"/>
+        <other_actor x="102.731" y="41.5278" z="0.5" yaw="270" model="vehicle.mercedes.sprinter" rolename="veh6"/>
+        <!-- Pedestrians -->
+        <other_actor x=" 113" y="9.10236" z="0.5" yaw="270" model="walker.pedestrian.0001" rolename="ped1"/>
+        <other_actor x="87.0014" y="9.7169" z="0.5" yaw="90" model="walker.pedestrian.0020" rolename="ped2"/>
+        <other_actor x="144.151" y="-7.99524" z="0.5" yaw="90" model="walker.pedestrian.0011" rolename="ped3"/>
+        <!-- weather -->
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0"
+                 sun_altitude_angle="75"/>
+    </scenario>
+</scenarios>

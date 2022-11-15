@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<scenarios>
+    <scenario name="VwScenario1" type="VwScenario1" town="Town04">
+        <!--EGO -->
+        <ego_vehicle x="31.45" y="-170.5" z="0.5" yaw="0" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <!--Vehicle -->
+
+        <other_actor x="58.4601" y="-190.69" z="0.5" yaw="90" model="vehicle.volkswagen.t2" rolename="veh1"/>
+        <other_actor x="81.1918" y="-173.592" z="0.5" yaw="180" model="vehicle.citroen.c3" rolename="veh2"/>
+        <other_actor x="102.243" y="-169.734" z="0.5" yaw="0" model="vehicle.chevrolet.impala" rolename="veh3"/>
+        <other_actor x="202.476" y="-160.47" z="0.5" yaw="260" model="vehicle.carlamotors.firetruck" rolename="veh4"/>
+        <other_actor x="128.703" y="-193.825" z="0.5" yaw="100" model="vehicle.dodge.charger_2020" rolename="veh5"/>
+        <other_actor x="140.332" y="-173.071" z="0.5" yaw="180" model="vehicle.mercedes.coupe" rolename="veh6"/>
+        <other_actor x="174.481" y="-173.801" z="0.5" yaw="180" model="vehicle.toyota.prius" rolename="veh7"/>
+        <other_actor x="157.051" y="-169.421" z="0.5" yaw="0" model="vehicle.seat.leon" rolename="veh8"/>
+        <other_actor x="177.841" y="-169.212" z="0.5" yaw="0" model="vehicle.dodge.charger_police_2020"
+                     rolename="veh9"/>
+        <other_actor x="219.944" y="-172.237" z="0.5" yaw="180" model="vehicle.volkswagen.t2" rolename="veh10"/>
+        <other_actor x="233.069" y="-172.237" z="0.5" yaw="180" model="vehicle.mini.cooper_s_2021" rolename="veh11"/>
+        <other_actor x="199.68" y="-226.573" z="0.5" yaw="90" model="vehicle.nissan.patrol" rolename="veh12"/>
+        <other_actor x="169" y="-240.009" z="0.5" yaw="340" model="vehicle.ford.mustang" rolename="veh13"/>
+        <other_actor x="202.41" y="-197.371" z="0.5" yaw="270" model="vehicle.mercedes.sprinter" rolename="veh14"/>
+        <!-- -->
+        <!-- Pedestrians -->
+        <other_actor x="102.028" y="-180.0" z="0.5" yaw="0" model="walker.pedestrian.0001" rolename="ped1"/>
+        <other_actor x="108.001" y="-179.27" z="0.5" yaw="180" model="walker.pedestrian.0020" rolename="ped2"/>
+        <other_actor x="121.334" y="-182.866" z="0.5" yaw="180" model="walker.pedestrian.0011" rolename="ped3"/>
+        <other_actor x="137.253" y="-188.787" z="0.5" yaw="90" model="walker.pedestrian.0034" rolename="ped4"/>
+        <other_actor x="208.35" y="-177.802" z="0.5" yaw="90" model="walker.pedestrian.0029" rolename="ped5"/>
+        <other_actor x="215.843" y="-176.597" z="0.5" yaw="0" model="walker.pedestrian.0008" rolename="ped6"/>
+        <other_actor x="208.182" y="-238.458" z="0.5" yaw="0" model="walker.pedestrian.0026" rolename="ped7"/>
+        <other_actor x="206.982" y="-188.053" z="0.5" yaw="270" model="walker.pedestrian.0015" rolename="ped8"/>
+        <other_actor x="262.322" y="-188.011" z="0.5" yaw="0" model="walker.pedestrian.0003" rolename="ped9"/>
+        <other_actor x="206.808" y="-184.523" z="0.5" yaw="180" model="walker.pedestrian.0020" rolename="ped10"/>
+        <other_actor x="206.895" y="-212.458" z="0.5" yaw="270" model="walker.pedestrian.0039" rolename="ped11"/>
+        <other_actor x="206.0" y="-165.101" z="0.5" yaw="180" model="walker.pedestrian.0013" rolename="ped12"/>
+        <other_actor x="206.689" y="-208.426" z="0.5" yaw="180" model="walker.pedestrian.0007" rolename="ped13"/>
+        <other_actor x="136.669" y="-179.418" z="0.5" yaw="0" model="walker.pedestrian.0018" rolename="ped14"/>
+        <!-- weather -->
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0"
+                 sun_altitude_angle="75"/>
+    </scenario>
+</scenarios>
