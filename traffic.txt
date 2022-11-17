@@ -1,0 +1,18 @@
+88 loc: 167.35, -187.16 straight
+90 loc: 163.68, -216.69 right
+89 loc: 140.56, -212.01 oncoming
+498 intersection at start
+
+79 loc: 248.73, 73.44 grün
+78 loc: 249.4, 46.07 rot
+66 loc: 224.51, 80.86 rot
+1352
+trigger 231.2 22.1
+
+
+76 loc: 14.92, 142.1 right
+74 loc: 10.34, 119.08 straight
+75 loc: -18.01, 123.14 left
+77 loc: -15.2, 143.46 oncoming
+103
+trigger 5.7 169.9

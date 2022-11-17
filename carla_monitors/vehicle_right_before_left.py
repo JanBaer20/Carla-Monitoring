@@ -42,6 +42,7 @@ class VehicleRightBeforeLeft(Criterion):
         print("Analyze blocks for current map.")
         blocks = self._rasterizer.analyze_map_from_xodr_content(open_drive)
         print("All blocks have been calculated")
+        self._world = world
         self._world_helper = WorldHelper(world, self._rasterizer)
         self._map_helper = MapHelper(self._rasterizer)
         #static_map_information = self._map_helper.get_static_map_information(blocks=blocks)
@@ -59,6 +60,7 @@ class VehicleRightBeforeLeft(Criterion):
         self._right_turns = []
         self._straight_wp = []
         self._right_turn_wp = []
+        self._intersection = None
 
 
     # Gets called each tick and checks the implemented test
@@ -100,32 +102,36 @@ class VehicleRightBeforeLeft(Criterion):
                         print(lane.lane_type)
                         print(self._world_helper.get_ad_map_lane_id(lane))
                         if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0: # and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                self.send_violation("Right vehicle ignored")
+                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
+                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
+                                    self.send_violation("Right vehicle ignored")
             for road in self._straight_wp:
                 for lane in self._world_helper.get_lanes_for_road(road):
                     if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
                         print(lane.lane_type)
                         print(self._world_helper.get_ad_map_lane_id(lane))
                         if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0: # and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                self.send_violation("Oncoming vehicle ignored")
-        if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._right_turns:
-            print("Vehicle turned right")
-            for road in self._right_turn_wp:
-                for lane in self._world_helper.get_lanes_for_road(road):
-                    if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
-                        if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0: # and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                self.send_violation("Right vehicle ignored")
+                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
+                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
+                                    self.send_violation("Oncoming vehicle ignored")
+        # if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._right_turns:
+        #     print("Vehicle turned right")
+        #     for road in self._right_turn_wp:
+        #         for lane in self._world_helper.get_lanes_for_road(road):
+        #             if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
+        #                 if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
+        #                     if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
+        #                         if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
+        #                             self.send_violation("Right vehicle ignored")
         if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._straight:
             print("Vehicle went straight")
             for road in self._right_turn_wp:
                 for lane in self._world_helper.get_lanes_for_road(road):
                     if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
                         if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0: # and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                self.send_violation("Right vehicle ignored")
+                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
+                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
+                                    self.send_violation("Right vehicle ignored")
 
         if not actor_waypoint.is_junction and (self._map_helper.get_lane_for_lane_id(lane_id) != self._current_road or self._current_lane != lane_id):
             self._straight.clear()
@@ -133,11 +139,13 @@ class VehicleRightBeforeLeft(Criterion):
             self._right_turns.clear()
             self._right_turn_wp.clear()
             self._straight_wp.clear()
+            self._intersection = None
 
             intersection_waypoint = self._world_helper.advance_waypoint_until_junction(actor_waypoint)
 
             for ip in intersection_waypoint.next(2.0):
                 if ip.get_junction() is not None:
+                    self._intersection = ip.get_junction()
                     for wp in self._world_helper.get_lanes_for_junction(ip.get_junction()):
                         # print(self._world_helper.get_ad_map_lane_id(wp))
                         # print(self._map_helper.get_successor_lanes(self._map_helper.get_lane_for_lane_id(lane_id)))

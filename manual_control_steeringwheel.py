@@ -885,7 +885,7 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(5.0)
         # print(client.get_available_maps())
-        # client.load_world('Town05')
+        # client.load_world('Town03')
 
         display = pygame.display.set_mode(
             (args.width, args.height),

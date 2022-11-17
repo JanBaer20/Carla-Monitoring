@@ -1,0 +1,31 @@
+
+ ======= Results of Scenario: PruefungCityScenario ---- SUCCESS =======
+
+ > Ego vehicles:
+Actor(id=569, type=vehicle.lincoln.mkz_2017); 
+
+ > Other actors:
+Actor(id=570, type=vehicle.ford.mustang); Actor(id=571, type=vehicle.citroen.c3); Actor(id=572, type=vehicle.dodge.charger_police_2020); Actor(id=573, type=vehicle.nissan.patrol); Actor(id=574, type=walker.pedestrian.0001); Actor(id=575, type=walker.pedestrian.0020); 
+
+ > Simulation Information
+╒═════════════════════════════════╤═════════════════════╕
+│ Start Time                      │ 2022-11-17 17:53:43 │
+├─────────────────────────────────┼─────────────────────┤
+│ End Time                        │ 2022-11-17 17:57:10 │
+├─────────────────────────────────┼─────────────────────┤
+│ Duration (System Time)          │ 207.26s             │
+├─────────────────────────────────┼─────────────────────┤
+│ Duration (Game Time)            │ 207.23s             │
+├─────────────────────────────────┼─────────────────────┤
+│ Ratio (System Time / Game Time) │ 1.0s                │
+╘═════════════════════════════════╧═════════════════════╛
+
+ > Criteria Information
+╒═══════╤════════════════╤═════════╤══════════════╤════════════════╕
+│ Actor │ Criterion      │ Result  │ Actual Value │ Expected Value │
+├───────┼────────────────┼─────────┼──────────────┼────────────────┤
+│       │ Timeout (Req.) │ SUCCESS │ 207.23       │ 600            │
+├───────┼────────────────┼─────────┼──────────────┼────────────────┤
+│       │ GLOBAL RESULT  │ SUCCESS │              │                │
+╘═══════╧════════════════╧═════════╧══════════════╧════════════════╛
+ ======================================================================
