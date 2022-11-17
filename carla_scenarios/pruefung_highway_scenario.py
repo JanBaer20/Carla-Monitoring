@@ -6,7 +6,9 @@ import py_trees
 from agents.navigation.local_planner import RoadOption
 from py_trees.behaviour import Behaviour
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import WaypointFollower, StopVehicle, Idle, ActorDestroy, LaneChange
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import WaypointFollower, StopVehicle, Idle, ActorDestroy, LaneChange, TrafficLightStateSetter
+from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerDistanceToLocation, \
+    WaitEndIntersection, InTriggerDistanceToVehicle
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest, ReachedRegionTest, Criterion
 from srunner.scenarios.basic_scenario import BasicScenario
 
@@ -19,18 +21,18 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(module)s - %(levelname)s: %(message)s', level=logging.INFO)
 
 
-class PruefungCityScenario(BasicScenario):
+class PruefungHighwayScenario(BasicScenario):
     """
-    This class models the scenario "highway to town" where the ego vehicle drives from highway into town roads.
+    This class models the scenario "town to highway to town" where the ego vehicle starts on a town road enters the highway and leaves it at the next intersection.
 
     Starting scenario with:
-    $ python3 /opt/scenario_runner/scenario_runner.py --scenario VwScenarioHighwayTown --configFile="vw_scenario_highway_town.xml" --additionalScenario="vw_scenario_highway_town.py" --reloadWorld --debug
+    $ python3 /opt/scenario_runner/scenario_runner.py --scenario PruefungHighwayScenario --configFile="PruefungHighwayScenario.xml" --additionalScenario="pruefung_highway_scenario.py" --reloadWorld --debug
     """
 
     def __init__(self, world, ego_vehicles, config, terminate_on_failure=False, debug_mode=False, criteria_enable=True,
                  timeout=600):
         """
-           Init function for the class VwScenarioHighwayTown
+           Init function for the class PruefungHighwayScenario
 
         Args:
             world (): the simulated world from carla
@@ -47,11 +49,11 @@ class PruefungCityScenario(BasicScenario):
         self._map = world.get_map()
         self._world = world
         self.scenario_helper = ScenarioHelper(self._map)
-        self.scenario_name = "PruefungCityScenario"
+        self.scenario_name = "PruefungHighwayScenario"
         self.subtype = config.subtype
 
         # Call constructor of BasicScenario
-        super(PruefungCityScenario, self).__init__(
+        super(PruefungHighwayScenario, self).__init__(
             self.scenario_name,
             ego_vehicles,
             config,
@@ -64,6 +66,7 @@ class PruefungCityScenario(BasicScenario):
         spectator = world.get_spectator()
         spectator.set_transform(carla.Transform(carla.Location(12.56666, 140.843, 110),
                                                 carla.Rotation(pitch=-90, yaw=0)))
+        world.freeze_all_traffic_lights(True)
 
     def _initialize_actors(self, config):
         """
@@ -101,7 +104,9 @@ class PruefungCityScenario(BasicScenario):
         """
         # final location for scneario end
         # unfreeze the vehicles to start moving but maintain start position throughout initialization
-        criteria = []
+        loc = carla.Location(25.6, -39.9, 0)
+        dist = 4.0
+        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist)]
         self.unfreezeVehicles()
         return criteria
 
@@ -116,11 +121,139 @@ class PruefungCityScenario(BasicScenario):
         # the composite root for the other actors
         others_node = py_trees.composites.Parallel("AllOtheActors")
 
+        veh3 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh3")
+
+        loc = carla.Location(17.25, 177.4, 0)
+        wp = self._world.get_map().get_waypoint(loc)
+        tf1 = None
+        tf2 = None
+        tf3 = None
+        for tf in self._world.get_traffic_lights_in_junction(wp.get_junction().id):
+            if round(tf.get_transform().location.x, 2) == 17.25:
+                tf1 = tf
+            elif round(tf.get_transform().location.x, 2) == 15.65:
+                tf2 = tf
+            elif round(tf.get_transform().location.x, 2) == 40.85:
+                tf3 = tf
+
+        loc = carla.Location(38.5, -189.1, 0)
+        wp = self._world.get_map().get_waypoint(loc)
+        tf4 = None
+        tf5 = None
+        tf6 = None
+        for tf in self._world.get_traffic_lights_in_junction(wp.get_junction().id):
+            if round(tf.get_transform().location.x, 2) == 47.95:
+                tf4 = tf
+            elif round(tf.get_transform().location.x, 2) == 22.75:
+                tf5 = tf
+            elif round(tf.get_transform().location.x, 2) == 46.35:
+                tf6 = tf
+
+        loc = carla.Location(30.5, -88.5, 0)
+        wp = self._world.get_map().get_waypoint(loc)
+        tf7 = None
+        tf8 = None
+        tf9 = None
+        tf10 = None
+        for tf in self._world.get_traffic_lights_in_junction(wp.get_junction().id):
+            if round(tf.get_transform().location.x, 2) == 20.25:
+                tf7 = tf
+            elif round(tf.get_transform().location.x, 2) == 21.25:
+                tf8 = tf
+            elif round(tf.get_transform().location.x, 2) == 41.4:
+                tf9 = tf
+            elif round(tf.get_transform().location.x, 2) == 41.85:
+                tf10 = tf
+
+        #behavior of traffic_light 1
+        tf1_sequence = py_trees.composites.Sequence("Traffic_Light1_Sequence")
+        others_node.add_child(tf1_sequence)
+        tf1_sequence.add_child(TrafficLightStateSetter(tf1, carla.TrafficLightState.Green))
+        tf1_sequence.add_child(Idle(10))
+        tf1_sequence.add_child(TrafficLightStateSetter(tf1, carla.TrafficLightState.Red))
+        tf1_sequence.add_child(Idle(10))
+
+        #behavior of traffic_light 2
+        tf2_sequence = py_trees.composites.Sequence("Traffic_Lighmustang_sequence")
+        others_node.add_child(tf2_sequence)
+        tf2_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Red))
+        tf2_sequence.add_child(Idle(10))
+        tf2_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Green))
+        tf2_sequence.add_child(Idle(10))
+
+        #behavior of traffic_light 3
+        tf3_sequence = py_trees.composites.Sequence("Traffic_Light3_Sequence")
+        others_node.add_child(tf3_sequence)
+        tf3_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Green))
+        tf3_sequence.add_child(Idle(10))
+        tf3_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Red))
+        tf3_sequence.add_child(Idle(10))
+
+        #behavior of traffic_light 4
+        tf4_sequence = py_trees.composites.Sequence("Traffic_Light4_Sequence")
+        others_node.add_child(tf4_sequence)
+        tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Red))
+        tf4_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-10.0, -189.2, 0), 8.0))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Yellow))
+        tf4_sequence.add_child(Idle(5))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Green))
+        tf4_sequence.add_child(Idle(5))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Red))
+        tf4_sequence.add_child(Idle(5))
+
+        #behavior of traffic_light 5
+        tf5_sequence = py_trees.composites.Sequence("Traffic_Light5_Sequence")
+        others_node.add_child(tf5_sequence)
+        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Green))
+        tf5_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-10.0, -189.2, 0), 8.0))
+        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
+        tf5_sequence.add_child(Idle(5))
+        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Red))
+        tf5_sequence.add_child(Idle(5))
+        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Green))
+        tf5_sequence.add_child(Idle(5))
+
+        #behavior of traffic_light 6
+        tf6_sequence = py_trees.composites.Sequence("Traffic_Light6_Sequence")
+        others_node.add_child(tf6_sequence)
+        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Green))
+        tf6_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-10.0, -189.2, 0), 8.0))
+        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Yellow))
+        tf6_sequence.add_child(Idle(5))
+        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Red))
+        tf6_sequence.add_child(Idle(5))
+        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Green))
+        tf6_sequence.add_child(Idle(5))
+        
+        #behavior of traffic_light 7
+        tf7_sequence = py_trees.composites.Sequence("Traffic_Light7_Sequence")
+        others_node.add_child(tf7_sequence)
+        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Red))
+        
+        #behavior of traffic_light 8
+        tf8_sequence = py_trees.composites.Sequence("Traffic_Light8_Sequence")
+        others_node.add_child(tf8_sequence)
+        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Green))
+        
+        #behavior of traffic_light 9
+        tf9_sequence = py_trees.composites.Sequence("Traffic_Light9_Sequence")
+        others_node.add_child(tf9_sequence)
+        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Red))
+
+        #behavior of traffic_light 10
+        tf10_sequence = py_trees.composites.Sequence("Traffic_Light10_Sequence")
+        others_node.add_child(tf10_sequence)
+        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Green))
+
         # behavior of vehicle 1
-        t2_sequence = py_trees.composites.Sequence("Ford_Mustang_Sequence")
-        others_node.add_child(t2_sequence)
+        mustang_sequence = py_trees.composites.Sequence("Ford_Mustang_Sequence")
+        others_node.add_child(mustang_sequence)
         veh1 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh1")
-        t2_sequence.add_child(WaypointFollower(veh1, 16,
+        mustang_sequence.add_child(Idle(5))
+        mustang_sequence.add_child(WaypointFollower(veh1, 16,
                                             self.scenario_helper.get_waypoint_plan(locations=[
                                                 (carla.Location(1.04, 187.5, 0), RoadOption.LANEFOLLOW),
                                                 (carla.Location(-8.95, 187.62, 0), RoadOption.LANEFOLLOW),
@@ -173,7 +306,7 @@ class PruefungCityScenario(BasicScenario):
                                                 (carla.Location(6.03, -186.43, 0), RoadOption.LANEFOLLOW),
                                                 (carla.Location(12.6, -186.48, 0), RoadOption.LANEFOLLOW)]),
                                             avoid_collision=True))
-        t2_sequence.add_child(WaypointFollower(veh1, 10,
+        mustang_sequence.add_child(WaypointFollower(veh1, 10,
                                             self.scenario_helper.get_waypoint_plan(locations=[
                                                 (carla.Location(17.36, -186.51, 0), RoadOption.LANEFOLLOW),
                                                 (carla.Location(19.99, -186.39, 0), RoadOption.LANEFOLLOW),
@@ -203,12 +336,13 @@ class PruefungCityScenario(BasicScenario):
                                                 (carla.Location(6.81, -95.1, 0), RoadOption.LANEFOLLOW),
                                                 (carla.Location(-2.73, -95.18, 0), RoadOption.LANEFOLLOW)]),
                                             avoid_collision=True))
-        t2_sequence.add_child(ActorDestroy(veh1))
+        mustang_sequence.add_child(ActorDestroy(veh1))
 
         # behavior of vehicle 2
         citreon_sequence = py_trees.composites.Sequence("Citreon_Sequence")
         others_node.add_child(citreon_sequence)
         veh2 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh2")
+        citreon_sequence.add_child(Idle(5))
         citreon_sequence.add_child(WaypointFollower(veh2, 22,
                                                     self.scenario_helper.get_waypoint_plan(locations=[
                                                         (carla.Location(3.57, 190.74, 0), RoadOption.LANEFOLLOW),
@@ -273,17 +407,16 @@ class PruefungCityScenario(BasicScenario):
         citreon_sequence.add_child(ActorDestroy(veh2))
 
         # behavior of vehicle 3
-        impala_sequence = py_trees.composites.Sequence("Impala_Sequence")
-        others_node.add_child(impala_sequence)
-        veh3 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh3")
-        impala_sequence.add_child(WaypointFollower(veh3, 30,
+        police_sequence = py_trees.composites.Sequence("Police_Sequence")
+        others_node.add_child(police_sequence)
+        police_sequence.add_child(WaypointFollower(veh3, 30,
                                                 self.scenario_helper.get_waypoint_plan(locations=[
                                                         (carla.Location(54.35, 191.5, 0), RoadOption.LANEFOLLOW),
-                                                        (carla.Location(38.79, 191.47, 0), RoadOption.LANEFOLLOW),
-                                                        (carla.Location(19.22, 191.23, 0), RoadOption.LANEFOLLOW),
-                                                        (carla.Location(3.63, 191.16, 0), RoadOption.LANEFOLLOW),
-                                                        (carla.Location(-19.48, 191.42, 0), RoadOption.LANEFOLLOW),
-                                                        (carla.Location(-39.61, 192.37, 0), RoadOption.LANEFOLLOW),
+                                                        (carla.Location(38.79, 192.47, 0), RoadOption.LANEFOLLOW),
+                                                        (carla.Location(19.22, 193.23, 0), RoadOption.LANEFOLLOW),
+                                                        (carla.Location(3.63, 194.16, 0), RoadOption.LANEFOLLOW),
+                                                        (carla.Location(-19.48, 194.42, 0), RoadOption.LANEFOLLOW),
+                                                        (carla.Location(-39.61, 194.37, 0), RoadOption.LANEFOLLOW),
                                                         (carla.Location(-55.85, 194.88, 0), RoadOption.LANEFOLLOW),
                                                         (carla.Location(-73.24, 195.45, 0), RoadOption.LANEFOLLOW),
                                                         (carla.Location(-97.45, 194.3, 0), RoadOption.LANEFOLLOW),
@@ -323,7 +456,7 @@ class PruefungCityScenario(BasicScenario):
                                                         (carla.Location(84.29, -190.23, 0), RoadOption.LANEFOLLOW),
                                                         (carla.Location(101.93, -190.03, 0), RoadOption.LANEFOLLOW)]),
                                                 avoid_collision=True))
-        impala_sequence.add_child(ActorDestroy(veh3))
+        police_sequence.add_child(ActorDestroy(veh3))
 
         # behavior of vehicle 4
         nissan_sequence = py_trees.composites.Sequence("Nissan_Sequence")
@@ -336,8 +469,8 @@ class PruefungCityScenario(BasicScenario):
                                                     (carla.Location(45.68, 141.57, 0), RoadOption.STRAIGHT),
                                                     (carla.Location(43.38, 141.51, 0), RoadOption.STRAIGHT)]),
                                                 avoid_collision=True))
-        # nissan_sequence.add_child(StopVehicle(veh4, 1))
-        # nissan_sequence.add_child(Idle(2))
+        nissan_sequence.add_child(StopVehicle(veh4, 1))
+        nissan_sequence.add_child(Idle(2))
         nissan_sequence.add_child(WaypointFollower(veh4, 10,
                                                 self.scenario_helper.get_waypoint_plan(locations=[
                                                     (carla.Location(42.73, 141.49, 0), RoadOption.STRAIGHT),
@@ -354,8 +487,9 @@ class PruefungCityScenario(BasicScenario):
                                                     (carla.Location(34.93, 85.71, 0), RoadOption.STRAIGHT),
                                                     (carla.Location(34.78, 73.7, 0), RoadOption.STRAIGHT)]),
                                                 avoid_collision=True))
+        nissan_sequence.add_child(StopVehicle(veh4, 1))
         # nissan_sequence.add_child(Idle(2))
-        nissan_sequence.add_child(ActorDestroy(veh4))
+        # nissan_sequence.add_child(ActorDestroy(veh4))
 
         # behavior of vehicle 5
         dodge_sequence = py_trees.composites.Sequence("Dodge_Sequence")
@@ -383,7 +517,8 @@ class PruefungCityScenario(BasicScenario):
         mercedes_sequence = py_trees.composites.Sequence("Mercedes_Sequence")
         others_node.add_child(mercedes_sequence)
         veh6 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh6")
-        mercedes_sequence.add_child(Idle(45))
+        mercedes_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-10.0, -189.2, 0), 8.0))
         mercedes_sequence.add_child(WaypointFollower(veh6, 8,
                                                     self.scenario_helper.get_waypoint_plan(locations=[
                                                         (carla.Location(33.9, -117.23, 0), RoadOption.STRAIGHT),
@@ -411,7 +546,7 @@ class PruefungCityScenario(BasicScenario):
         toyota_sequence = py_trees.composites.Sequence("Toyota_Sequence")
         others_node.add_child(toyota_sequence)
         veh7 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh7")
-        toyota_sequence.add_child(Idle(3))
+        toyota_sequence.add_child(Idle(8))
         toyota_sequence.add_child(WaypointFollower(veh7, 18,
                                                 self.scenario_helper.get_waypoint_plan(locations=[
                                                     (carla.Location(-124.94, 187.8, 0), RoadOption.STRAIGHT),
@@ -457,7 +592,6 @@ class PruefungCityScenario(BasicScenario):
         ped1_sequence = py_trees.composites.Sequence("Pedestrian1_Sequence")
         others_node.add_child(ped1_sequence)
         ped1 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "ped1")
-        ped1_sequence.add_child(Idle(14))
         ped1_sequence.add_child(WaypointFollower(ped1, 3,
                                                 self.scenario_helper.get_waypoint_plan(locations=[
                                                     (carla.Location(38.5059, 131.652, 0), RoadOption.LANEFOLLOW),
@@ -470,7 +604,6 @@ class PruefungCityScenario(BasicScenario):
         ped2_sequence = py_trees.composites.Sequence("Pedestrian2_Sequence")
         others_node.add_child(ped2_sequence)
         ped2 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "ped2")
-        ped2_sequence.add_child(Idle(15))
         ped2_sequence.add_child(WaypointFollower(ped2, 2,
                                                 self.scenario_helper.get_waypoint_plan(locations=[
                                                     (carla.Location(20.4881, 59.9498, 0), RoadOption.LANEFOLLOW)],

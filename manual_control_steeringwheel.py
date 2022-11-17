@@ -94,6 +94,8 @@ try:
     from pygame.locals import K_r
     from pygame.locals import K_s
     from pygame.locals import K_w
+    from pygame.locals import K_x
+    from pygame.locals import K_t
 except ImportError:
     raise RuntimeError('cannot import pygame, make sure pygame package is installed')
 
@@ -311,6 +313,21 @@ class DualControl(object):
                     world.camera_manager.set_sensor(event.key - 1 - K_0)
                 elif event.key == K_r:
                     world.camera_manager.toggle_recording()
+                elif event.key == K_x:
+                    f = open("demofile2.txt", "a")
+                    t = world.player.get_transform()
+                    f.write("(carla.Location(" + str(round(t.location.x, 2)) + ", " + str(round(t.location.y, 2)) + ", 0), RoadOption.STRAIGHT)\n")
+                    f.close()
+                elif event.key == K_t:
+                    t = world.player.get_transform().location
+                    wp = world.world.get_map().get_waypoint(t)
+                    if wp.is_junction:
+                        f = open("traffic.txt", "a")
+                        for tf in world.world.get_traffic_lights_in_junction(wp.get_junction().id):
+                            t = tf.get_transform()
+                            f.write(str(tf.id) +" loc: " + str(round(t.location.x, 2)) + ", " + str(round(t.location.y, 2)) + "\n")
+                        f.write(str(wp.get_junction().id))
+                        f.close()
                 if isinstance(self._control, carla.VehicleControl):
                     if event.key == K_q:
                         self._control.gear = 1 if self._control.reverse else -1
@@ -868,7 +885,7 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(5.0)
         # print(client.get_available_maps())
-        # client.load_world('Town06')
+        # client.load_world('Town05')
 
         display = pygame.display.set_mode(
             (args.width, args.height),
