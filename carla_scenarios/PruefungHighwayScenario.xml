@@ -3,7 +3,7 @@
     <scenario name="PruefungHighwayScenario" type="PruefungHighwayScenario" town="Town05">
         <!--EGO -->
 
-        <ego_vehicle x=" 24.8" y="118" z="0.5" yaw="90" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <ego_vehicle x=" 24.8" y="100.0" z="0.5" yaw="90" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
         <!--Vehicle -->
 
         <other_actor x="8.2" y="187.7" z="0.5" yaw="180" model="vehicle.ford.mustang" rolename="veh1"/>

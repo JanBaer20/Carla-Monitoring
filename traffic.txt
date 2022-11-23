@@ -16,3 +16,33 @@ trigger 231.2 22.1
 77 loc: -15.2, 143.46 oncoming
 103
 trigger 5.7 169.9
+
+462 loc: -67.82, 121.06 straight/right
+464 loc: -96.89, 124.37 left/straight
+461 loc: -93.98, 145.86 oncoming/left
+463 loc: -66.79, 142.75 right/oncoming
+238
+
+trigger -30.9 131.6
+
+
+234 loc: 55.77, 6.43 straight
+235 loc: 68.93, 9.89 left
+224 loc: 62.72, -9.22 right
+466
+trigger 70.0 -36
+
+
+230 loc: 4.91, -229.97 straight
+231 loc: 4.46, -246.5 right
+229 loc: 6.36, -246.34 oncoming
+918
+trigger -26.1 -243.1
+
+
+194 loc: -10.94, -10.13 straight
+236 loc: 5.91, 5.83 oncoming
+225 loc: 2.28, -12.74 right
+232 loc: -12.22, 6.76 left
+232 loc: -12.22, 6.76 left
+725

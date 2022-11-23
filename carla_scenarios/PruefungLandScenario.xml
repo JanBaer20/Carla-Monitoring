@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<scenarios>
+    <scenario name="PruefungLandScenario" type="PruefungLandScenario" town="Town07">
+        <!--EGO -->
+
+        <ego_vehicle x="-197.8" y="-126.9" z="0.5" yaw="270" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <!--Vehicle -->
+
+        <other_actor x="-168.6" y="-162.7" z="0.5" yaw="180" model="vehicle.ford.mustang" rolename="veh1"/>
+        <other_actor x="-198.2" y="-175.0" z="0.5" yaw="270" model="vehicle.citroen.c3" rolename="veh2"/>
+        <other_actor x="-0.5" y="-199.5" z="0.5" yaw="270" model="vehicle.mercedes.sprinter" rolename="veh3"/>
+        <other_actor x="28.3" y="-0.5" z="0.5" yaw="0" model="vehicle.nissan.patrol" rolename="veh4"/>
+        <other_actor x="86.0" y="24.4" z="0.5" yaw="260" model="vehicle.dodge.charger_2020" rolename="veh5"/>
+        <other_actor x="-1.9" y="30.2" z="0.5" yaw="270" model="vehicle.mercedes.coupe" rolename="veh6"/>
+        <other_actor x="73.0" y="-6.4" z="8.5" yaw="300" model="vehicle.toyota.prius" rolename="veh7"/>
+        <other_actor x="-4.5" y="-243.7" z="0.5" yaw="180" model="vehicle.seat.leon" rolename="veh8"/>
+        <!-- <other_actor x="51.3929" y="85.5368" z="0.5" yaw="180" model="vehicle.dodge.charger_police_2020"
+                     rolename="veh9"/>
+        <other_actor x="27.751" y="58.9238" z="0.5" yaw="90" model="vehicle.ford.mustang" rolename="veh10"/> -->
+
+        <!-- Pedestrians -->
+        <!-- <other_actor x="38.9954" y="157.264" z="0.5" yaw="270" model="walker.pedestrian.0001" rolename="ped1"/>
+        <other_actor x="20.7341" y="103.165" z="0.5" yaw="270" model="walker.pedestrian.0020" rolename="ped2"/> -->
+        <!-- weather -->
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0"
+                 sun_altitude_angle="75"/>
+    </scenario>
+</scenarios>

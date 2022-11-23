@@ -280,6 +280,14 @@ class MapHelper(object):
             lane_id = int(lane_id)
         return ad.map.lane.getLane(lane_id)
 
+    def get_lanes_for_road_id(self, road_id: int) -> List[lane.Lane]:
+        """
+        Returns the lane.Lane Object for the given lane_id
+        :param lane_id: The lane_id for which the lane.Lane object should be calculated
+        :return: The lane.Lane object
+        """
+        return [l for l in ad.map.lane.getLanes() if self.get_road_id_for_ad_map_lane_id(l) == road_id and self.get_lane_for_lane_id(l).type == ad.map.lane.LaneType.NORMAL]
+
     def get_road_id_for_lane(self, lane: lane.Lane) -> int:
         """
         Returns the road id for the given lane

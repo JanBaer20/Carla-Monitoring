@@ -44,10 +44,8 @@ class VehicleOverSpeedlimit(Criterion):
         self._debug_mode = debug_mode
         # Save starting point as "stopped"
         self._last_stopped_time = GameTime.get_time()
-        # Save if the vehicle has moved once
-        self._has_initially_moved = False
-        # Initialize list to store already tracked stop times
-        self._stopped_times = []
+        # Initialize list to store already tracked over speedlimit
+        self._over_speedlimit = False
 
     # Gets called each tick and checks the implemented test
     def update(self):
@@ -89,14 +87,13 @@ class VehicleOverSpeedlimit(Criterion):
             print(speed_limits)
 
             for speed_limit in speed_limits:
-                if(actor_speed < speed_limit.speed_limit):
+                if(actor_speed > speed_limit.speed_limit and not self._over_speedlimit):
+                    self.send_violation(b"Vehicle broke the speed limit")
+                    self._over_speedlimit = True
+                    self.test_status = py_trees.common.Status.FAILURE
+                else:
+                    self._over_speedlimit = False
                     return py_trees.common.Status.RUNNING
-        else:
-            return py_trees.common.Status.RUNNING
-
-        # The ego vehicle stopped long enough. Set test status
-        self.send_violation(b"Vehicle broke the speed limit")
-        self.test_status = py_trees.common.Status.FAILURE
 
         # Record event by increasing actual result by 1
         self.actual_value += 1
@@ -138,7 +135,7 @@ def monitor(args):
     CarlaDataProvider.set_client(client)
     CarlaDataProvider.register_actor(actor)
 
-    test = VehicleOverSpeedlimit(actor, debug_mode=True,
+    test = VehicleOverSpeedlimit(actor, world, debug_mode=True,
                                                 terminate_on_failure=args.sof)
 
     while True:

@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <scenarios>
-    <scenario name="PruefungCityScenario" type="PruefungCityScenario" town="Town03">
+    <scenario name="PruefungTestScenario" type="PruefungTestScenario" town="Town03">
         <!--EGO -->
 
-        <ego_vehicle x="113.1" y="-186.6" z="0.5" yaw="0" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
+        <ego_vehicle x="232.6" y="-60.6" z="0.5" yaw="0" model="vehicle.lincoln.mkz_2017" rolename="hero"/>
         <!--Vehicle -->
 
-        <other_actor x="155.0" y="-181.7" z="0.5" yaw="270" model="vehicle.ford.mustang" rolename="veh1"/>
-        <other_actor x="194.8" y="9.2" z="2.5" yaw="0" model="vehicle.citroen.c3" rolename="veh2"/>
-        <other_actor x="198.2" y="63.2" z="0.5" yaw="0" model="vehicle.dodge.charger_police_2020" rolename="veh3"/>
+        <!-- <other_actor x="155.0" y="-181.7" z="0.5" yaw="270" model="vehicle.ford.mustang" rolename="veh1"/> -->
+        <other_actor x="214.8" y="5.8" z="2.5" yaw="0" model="vehicle.citroen.c3" rolename="veh2"/>
+        <!-- <other_actor x="198.2" y="63.2" z="0.5" yaw="0" model="vehicle.dodge.charger_police_2020" rolename="veh3"/>
         <other_actor x="184.7" y="62.6" z="0.5" yaw="0" model="vehicle.nissan.patrol" rolename="veh4"/>
         <other_actor x="-5.9" y="158.7" z="0.5" yaw="90" model="vehicle.dodge.charger_2020" rolename="veh5"/>
-        <other_actor x="52.4" y="207.4" z="0.5" yaw="270" model="vehicle.mercedes.coupe" rolename="veh6"/>
+        <other_actor x="52.4" y="207.4" z="0.5" yaw="270" model="vehicle.mercedes.coupe" rolename="veh6"/> -->
         <!-- <other_actor x="-111.9" y="187.68" z="8.5" yaw="175" model="vehicle.toyota.prius" rolename="veh7"/>
         <other_actor x="5.50756" y="94.8561" z="0.5" yaw="0" model="vehicle.seat.leon" rolename="veh8"/>
         <other_actor x="51.3929" y="85.5368" z="0.5" yaw="180" model="vehicle.dodge.charger_police_2020"

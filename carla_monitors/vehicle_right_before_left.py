@@ -91,29 +91,39 @@ class VehicleRightBeforeLeft(Criterion):
         print("isJunction")
         actor_waypoint = self._world_helper.get_nearest_waypoint_for_data_actor(data_ego_vehicle)
         lane_id = self._world_helper.get_ad_map_lane_id(actor_waypoint)
+        lane = self._map_helper.get_lane_for_lane_id(lane_id)
         print(actor_waypoint.is_junction)
         
 
-        if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._left_turns:
+        if lane_id in self._left_turns:
             print("Vehicle turned left")
-            for road in self._right_turn_wp:
-                for lane in self._world_helper.get_lanes_for_road(road):
-                    if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
-                        print(lane.lane_type)
-                        print(self._world_helper.get_ad_map_lane_id(lane))
-                        if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
-                                    self.send_violation("Right vehicle ignored")
-            for road in self._straight_wp:
-                for lane in self._world_helper.get_lanes_for_road(road):
-                    if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
-                        print(lane.lane_type)
-                        print(self._world_helper.get_ad_map_lane_id(lane))
-                        if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
-                                    self.send_violation("Oncoming vehicle ignored")
+            for turn_lane_id in self._right_turns:
+                road = self._map_helper.get_road_id_for_ad_map_lane_id(turn_lane_id)
+                turn_lane = self._map_helper.get_lane_for_lane_id(turn_lane_id)
+                for oncoming_lane_id in self._map_helper.get_lanes_for_road_id(road):
+                    oncoming_lane = self._map_helper.get_lane_for_lane_id(oncoming_lane_id)
+                    if(turn_lane.direction != oncoming_lane.direction):
+                        if len(self._world_helper.get_all_stop_signs_for_lane_id(oncoming_lane_id)) == 0:
+                            if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection.id)) == 0):
+                                if len(self._world_helper.get_all_vehicles_for_lane_id(oncoming_lane_id)) > 0:
+                                    self.send_violation(b"Right vehicle ignored")
+            for turn_lane_id in self._straight:
+                print("test")
+                road = self._map_helper.get_road_id_for_ad_map_lane_id(turn_lane_id)
+                turn_lane = self._map_helper.get_lane_for_lane_id(turn_lane_id)
+                for oncoming_lane_id in self._map_helper.get_lanes_for_road_id(road):
+                    print("test2")
+                    oncoming_lane = self._map_helper.get_lane_for_lane_id(oncoming_lane_id)
+                    if(turn_lane.direction != oncoming_lane.direction):
+                        print("test3")
+                        if len(self._world_helper.get_all_stop_signs_for_lane_id(oncoming_lane_id)) == 0:
+                            print("test4")
+                            if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection.id)) == 0):
+                                print("test5")
+                                print(oncoming_lane_id)
+                                print(lane_id)
+                                if len(self._world_helper.get_all_vehicles_for_lane_id(oncoming_lane_id)) > 0:
+                                    self.send_violation(b"Oncoming vehicle ignored")
         # if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._right_turns:
         #     print("Vehicle turned right")
         #     for road in self._right_turn_wp:
@@ -123,15 +133,18 @@ class VehicleRightBeforeLeft(Criterion):
         #                     if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
         #                         if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
         #                             self.send_violation("Right vehicle ignored")
-        if self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)) in self._straight:
+        if lane_id in self._straight:
             print("Vehicle went straight")
-            for road in self._right_turn_wp:
-                for lane in self._world_helper.get_lanes_for_road(road):
-                    if lane.lane_type != carla.LaneType.Shoulder and lane.lane_type != carla.LaneType.Sidewalk:
-                        if(abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) > 170 and abs(lane.transform.rotation.yaw - road.transform.rotation.yaw) < 190):
-                            if len(lane.get_landmarks_of_type(5, carla.LandmarkType.StopSign)) == 0 and len(lane.get_landmarks_of_type(5, carla.LandmarkType.YieldSign)) == 0 and len(self._world_helper.get_all_actors_for_lane(lane)) > 0:
-                                if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection)) == 0):
-                                    self.send_violation("Right vehicle ignored")
+            for turn_lane_id in self._right_turns:
+                road = self._map_helper.get_road_id_for_ad_map_lane_id(turn_lane_id)
+                turn_lane = self._map_helper.get_lane_for_lane_id(turn_lane_id)
+                for oncoming_lane_id in self._map_helper.get_lanes_for_road_id(road):
+                    oncoming_lane = self._map_helper.get_lane_for_lane_id(oncoming_lane_id)
+                    if(turn_lane.direction != oncoming_lane.direction):
+                        if len(self._world_helper.get_all_stop_signs_for_lane_id(oncoming_lane_id)) == 0:
+                            if(self._intersection is not None and len(self._world.get_traffic_lights_in_junction(self._intersection.id)) == 0):
+                                if len(self._world_helper.get_all_vehicles_for_lane_id(oncoming_lane_id)) > 0:
+                                    self.send_violation(b"Right vehicle ignored")
 
         if not actor_waypoint.is_junction and (self._map_helper.get_lane_for_lane_id(lane_id) != self._current_road or self._current_lane != lane_id):
             self._straight.clear()
@@ -158,22 +171,36 @@ class VehicleRightBeforeLeft(Criterion):
                             # print(wp.transform.rotation.yaw - intersection_waypoint.transform.rotation.yaw)
                             # print(self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(self._world_helper.get_ad_map_lane_id(wp))))
                             if angle < 30 or angle > 330:
-                                turn_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
-                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(turn_lane_id))
-                                if road_id not in self._straight:
-                                    self._straight.append(road_id)
+                                oncoming_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
+                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(oncoming_lane_id))
+                                if oncoming_lane_id not in self._straight:
+                                    self._straight.append(oncoming_lane_id)
                                     self._straight_wp.append(next_road)
+                                next_lane_id = self._world_helper.get_ad_map_lane_id(next_road.next(5)[0])
+                                next_road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(next_lane_id))
+                                if next_lane_id not in self._straight:
+                                    self._straight.append(next_lane_id)
+                                    self._straight_wp.append(next_road.next(5)[0])
                             elif angle < 330 and angle > 210:
-                                turn_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
-                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(turn_lane_id))
-                                if road_id not in self._left_turns:
-                                    self._left_turns.append(road_id)
+                                oncoming_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
+                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(oncoming_lane_id))
+                                if oncoming_lane_id not in self._left_turns:
+                                    self._left_turns.append(oncoming_lane_id)
+                                next_lane_id = self._world_helper.get_ad_map_lane_id(next_road.next(5)[0])
+                                next_road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(next_lane_id))
+                                if next_lane_id not in self._left_turns:
+                                    self._left_turns.append(next_lane_id)
                             elif angle > 30 and angle < 150:
-                                turn_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
-                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(turn_lane_id))
-                                if road_id not in self._right_turns:
-                                    self._right_turns.append(road_id)
+                                oncoming_lane_id = self._world_helper.get_ad_map_lane_id(next_road)
+                                road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(oncoming_lane_id))
+                                if oncoming_lane_id not in self._right_turns:
+                                    self._right_turns.append(oncoming_lane_id)
                                     self._right_turn_wp.append(next_road)
+                                next_lane_id = self._world_helper.get_ad_map_lane_id(next_road.next(5)[0])
+                                next_road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(next_lane_id))
+                                if next_lane_id not in self._right_turns:
+                                    self._right_turns.append(next_lane_id)
+                                    self._right_turn_wp.append(next_road.next(5)[0])
 
         self._current_road = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id))
         # print(lane_id)

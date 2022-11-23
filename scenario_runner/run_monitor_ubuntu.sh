@@ -28,7 +28,12 @@ echo "SCENARIO_FILE: $SCENARIO_FILE"
 # start scenario runner
 # python3.7 scenario_runner.py --scenario CutInFrom_left_Lane --reloadWorld --output --json &
 
+# /usr/bin/python3.7 $MONITOR_DIR/vehicle_turn_blinker.py &
+# /usr/bin/python3.7 $MONITOR_DIR/vehicle_over_speedlimit.py &
+# /usr/bin/python3.7 $MONITOR_DIR/vehicle_passed_red_traffic_light.py &
+# /usr/bin/python3.7 $MONITOR_DIR/vehicle_changed_lane.py &
 /usr/bin/python3.7 $MONITOR_DIR/vehicle_right_before_left.py
+# /usr/bin/python3.7 $MONITOR_DIR/vehicle_data_test.py
 
 ## start carla API client to that outputs frame-%08d.png files until simulation ends
 #export SDL_VIDEODRIVER=dummy

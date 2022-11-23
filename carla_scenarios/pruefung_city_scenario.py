@@ -66,6 +66,7 @@ class PruefungCityScenario(BasicScenario):
         spectator = world.get_spectator()
         spectator.set_transform(carla.Transform(carla.Location(12.56666, 140.843, 110),
                                                 carla.Rotation(pitch=-90, yaw=0)))
+        world.freeze_all_traffic_lights(True)
 
     def _initialize_actors(self, config):
         """
@@ -103,7 +104,9 @@ class PruefungCityScenario(BasicScenario):
         """
         # final location for scneario end
         # unfreeze the vehicles to start moving but maintain start position throughout initialization
-        criteria = []
+        loc = carla.Location(-70.8, 88.8, 0)
+        dist = 5.0
+        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist)]
         self.unfreezeVehicles()
         return criteria
 
@@ -174,8 +177,7 @@ class PruefungCityScenario(BasicScenario):
                                                         (carla.Location(229.34, 15.02, 0), RoadOption.STRAIGHT),
                                                         (carla.Location(231.01, 21.55, 0), RoadOption.STRAIGHT),
                                                         (carla.Location(230.85, 27.77, 0), RoadOption.STRAIGHT),
-                                                        (carla.Location(230.72, 34.02, 0), RoadOption.STRAIGHT),
-                                                        (carla.Location(230.64, 36.1, 0), RoadOption.STRAIGHT)]),
+                                                        (carla.Location(230.72, 33.02, 0), RoadOption.STRAIGHT)]),
                                                     avoid_collision=True, ))
         citreon_sequence.add_child(StopVehicle(veh2, 1))
         citreon_sequence.add_child(Idle(7))
@@ -325,54 +327,94 @@ class PruefungCityScenario(BasicScenario):
         nissan_sequence.add_child(Idle())
 
         # behavior of vehicle 5
-        # dodge_sequence = py_trees.composites.Sequence("Dodge_Sequence")
-        # others_node.add_child(dodge_sequence)
-        # veh5 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh5")
-        # dodge_sequence.add_child(Idle(2))
-        # dodge_sequence.add_child(WaypointFollower(veh5, 5,
-        #                                         self.scenario_helper.get_waypoint_plan(locations=[
-        #                                             (carla.Location(15.5, 201.36, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(24.83, 199.1, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(32.54, 191.5, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.48, 180.45, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.98, 170.98, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.98, 162.14, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.94, 158.18, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(35.01, 148.74, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.92, 136.26, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.92, 123.17, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(34.97, 116.7, 0), RoadOption.STRAIGHT),
-        #                                             (carla.Location(35.07, 109.13, 0), RoadOption.STRAIGHT)]),
-        #                                         avoid_collision=True))
-        # dodge_sequence.add_child(ActorDestroy(veh5))
+        dodge_sequence = py_trees.composites.Sequence("Dodge_Sequence")
+        others_node.add_child(dodge_sequence)
+        veh5 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh5")
+        dodge_sequence.add_child(InTriggerDistanceToLocation(veh2,
+                                                               carla.Location(52.5, 193.9, 0), 4.0))
+        dodge_sequence.add_child(WaypointFollower(veh5, 10,
+                                                self.scenario_helper.get_waypoint_plan(locations=[
+                                                    (carla.Location(-5.6, 163.43, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-5.33, 169.84, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-5.12, 174.97, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-5.05, 181.06, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-5.13, 186.59, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-6.58, 191.94, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-11.82, 195.94, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-18.23, 197.14, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-27.29, 197.61, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-38.17, 197.43, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-47.8, 196.44, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-51.95, 195.37, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-56.91, 193.27, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-63.23, 189.18, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-68.79, 183.67, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-73.11, 177.01, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-76.24, 169.06, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-77.44, 163.1, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-78.0, 156.77, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-78.29, 151.07, 0), RoadOption.STRAIGHT)]),
+                                                avoid_collision=True))
+        dodge_sequence.add_child(StopVehicle(veh5, 1))
+        dodge_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-30.9, 131.6, 0), 4.0))
+        dodge_sequence.add_child(Idle(2))
+        dodge_sequence.add_child(WaypointFollower(veh5, 10,
+                                                self.scenario_helper.get_waypoint_plan(locations=[
+                                                    (carla.Location(-78.52, 147.09, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-78.77, 143.12, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-80.3, 137.77, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-84.11, 133.12, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-90.58, 130.25, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-98.94, 129.55, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-108.71, 129.66, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-119.8, 129.61, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-127.57, 128.38, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-134.46, 124.64, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-139.05, 118.75, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-141.53, 110.85, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-142.08, 104.07, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-142.23, 98.31, 0), RoadOption.STRAIGHT),
+                                                    (carla.Location(-142.23, 92.42, 0), RoadOption.STRAIGHT)]),
+                                                avoid_collision=True))
+        dodge_sequence.add_child(ActorDestroy(veh5))
 
         # # behavior of vehicle 6
-        # mercedes_sequence = py_trees.composites.Sequence("Mercedes_Sequence")
-        # others_node.add_child(mercedes_sequence)
-        # veh6 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh6")
-        # mercedes_sequence.add_child(Idle(45))
-        # mercedes_sequence.add_child(WaypointFollower(veh6, 8,
-        #                                             self.scenario_helper.get_waypoint_plan(locations=[
-        #                                                 (carla.Location(33.9, -117.23, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(34.03, -120.12, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(34.5, -134.19, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(35.31, -151.9, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(35.84, -167.32, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(35.95, -178.15, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(35.21, -187.03, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(31.66, -195.22, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(22.61, -202.15, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(12.46, -203.72, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-0.41, -203.61, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-12.46, -203.74, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-25.12, -203.95, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-42.4, -204.0, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-59.91, -203.61, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-78.8, -204.15, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-101.42, -204.11, 0), RoadOption.STRAIGHT),
-        #                                                 (carla.Location(-122.7, -204.28, 0), RoadOption.STRAIGHT)]),
-        #                                             avoid_collision=True))
-        # mercedes_sequence.add_child(ActorDestroy(veh6))
+        mercedes_sequence = py_trees.composites.Sequence("Mercedes_Sequence")
+        others_node.add_child(mercedes_sequence)
+        veh6 = self.scenario_helper.get_actor_by_role_name(self.other_actors, "veh6")
+        mercedes_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(228.8, 121.7, 0), 4.0))
+        mercedes_sequence.add_child(WaypointFollower(veh6, 24,
+                                                    self.scenario_helper.get_waypoint_plan(locations=[
+                                                        (carla.Location(58.61, 207.55, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(70.97, 207.39, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(88.66, 207.49, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(106.62, 207.39, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(127.95, 207.59, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(148.03, 207.65, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(164.77, 207.09, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(175.63, 205.49, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(186.93, 202.41, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(197.83, 198.27, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(209.76, 192.25, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(222.41, 183.55, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(232.7, 171.75, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(238.79, 159.37, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(241.76, 145.5, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(242.58, 130.38, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(243.01, 116.59, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(243.62, 103.15, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(243.98, 90.64, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.06, 83.6, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.09, 81.44, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.25, 73.09, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.47, 60.53, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.67, 45.55, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(244.92, 30.17, 0), RoadOption.STRAIGHT),
+                                                        (carla.Location(245.08, 22.17, 0), RoadOption.STRAIGHT)]),
+                                                    avoid_collision=True))
+        mercedes_sequence.add_child(ActorDestroy(veh6))
 
         # behavior of vehicle 7
         # toyota_sequence = py_trees.composites.Sequence("Toyota_Sequence")
@@ -481,29 +523,31 @@ class PruefungCityScenario(BasicScenario):
             elif round(tf.get_transform().location.x, 2) == -15.2:
                 tf10 = tf
 
+        tf11 = None
+        tf12 = None
+        tf13 = None
+        tf14 = None
+        for tf in self._world.get_traffic_lights_in_junction(238):
+            if round(tf.get_transform().location.x, 2) == -67.82:
+                tf11 = tf
+            elif round(tf.get_transform().location.x, 2) == -96.89:
+                tf12 = tf
+            elif round(tf.get_transform().location.x, 2) == -93.98:
+                tf13 = tf
+            elif round(tf.get_transform().location.x, 2) == -66.79:
+                tf14 = tf
+
         #behavior of traffic_light 1
         tf1_sequence = py_trees.composites.Sequence("Traffic_Light1_Sequence")
         others_node.add_child(tf1_sequence)
         tf1_sequence.add_child(TrafficLightStateSetter(tf1, carla.TrafficLightState.Red))
+        tf1_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Green))
+        tf1_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Green))
         tf1_sequence.add_child(Idle(10))
         tf1_sequence.add_child(TrafficLightStateSetter(tf1, carla.TrafficLightState.Green))
+        tf1_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Red))
+        tf1_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Red))
         tf1_sequence.add_child(Idle(10))
-
-        #behavior of traffic_light 2
-        tf2_sequence = py_trees.composites.Sequence("Traffic_Lighmustang_sequence")
-        others_node.add_child(tf2_sequence)
-        tf2_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Green))
-        tf2_sequence.add_child(Idle(10))
-        tf2_sequence.add_child(TrafficLightStateSetter(tf2, carla.TrafficLightState.Red))
-        tf2_sequence.add_child(Idle(10))
-
-        #behavior of traffic_light 3
-        tf3_sequence = py_trees.composites.Sequence("Traffic_Light3_Sequence")
-        others_node.add_child(tf3_sequence)
-        tf3_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Green))
-        tf3_sequence.add_child(Idle(10))
-        tf3_sequence.add_child(TrafficLightStateSetter(tf3, carla.TrafficLightState.Red))
-        tf3_sequence.add_child(Idle(10))
 
         #behavior of traffic_light 4
         tf4_sequence = py_trees.composites.Sequence("Traffic_Light4_Sequence")
@@ -512,103 +556,81 @@ class PruefungCityScenario(BasicScenario):
         tf4_sequence.add_child(InTriggerDistanceToLocation(veh2,
                                                                carla.Location(231.2, 22.1, 0), 4.0))
         tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Yellow))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Yellow))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
         tf4_sequence.add_child(Idle(2))
         tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Green))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Red))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Red))
         tf4_sequence.add_child(Idle(8))
         tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Yellow))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Yellow))
         tf4_sequence.add_child(Idle(2))
         tf4_sequence.add_child(TrafficLightStateSetter(tf4, carla.TrafficLightState.Red))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Green))
+        tf4_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Green))
         tf4_sequence.add_child(Idle())
-
-        #behavior of traffic_light 5
-        tf5_sequence = py_trees.composites.Sequence("Traffic_Light5_Sequence")
-        others_node.add_child(tf5_sequence)
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Green))
-        tf5_sequence.add_child(InTriggerDistanceToLocation(veh2,
-                                                               carla.Location(231.2, 22.1, 0), 4.0))
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
-        tf5_sequence.add_child(Idle(2))
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Red))
-        tf5_sequence.add_child(Idle(8))
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
-        tf5_sequence.add_child(Idle(2))
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Green))
-        tf5_sequence.add_child(Idle())
-
-        #behavior of traffic_light 6
-        tf6_sequence = py_trees.composites.Sequence("Traffic_Light6_Sequence")
-        others_node.add_child(tf6_sequence)
-        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Green))
-        tf6_sequence.add_child(InTriggerDistanceToLocation(veh2,
-                                                               carla.Location(231.2, 22.1, 0), 4.0))
-        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Yellow))
-        tf6_sequence.add_child(Idle(2))
-        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Red))
-        tf6_sequence.add_child(Idle(8))
-        tf5_sequence.add_child(TrafficLightStateSetter(tf5, carla.TrafficLightState.Yellow))
-        tf5_sequence.add_child(Idle(2))
-        tf6_sequence.add_child(TrafficLightStateSetter(tf6, carla.TrafficLightState.Green))
-        tf6_sequence.add_child(Idle())
         
         #behavior of traffic_light 7
         tf7_sequence = py_trees.composites.Sequence("Traffic_Light7_Sequence")
         others_node.add_child(tf7_sequence)
-        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Green))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Green))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Green))
         tf7_sequence.add_child(InTriggerDistanceToLocation(veh4,
                                                                carla.Location(5.7, 169.9, 0), 4.0))
         tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Yellow))
-        tf7_sequence.add_child(Idle(2))
-        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Red))
-        tf7_sequence.add_child(Idle(8))
-        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Yellow))
         tf7_sequence.add_child(Idle(2))
         tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Green))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Green))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(Idle(8))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Yellow))
+        tf7_sequence.add_child(Idle(2))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf7, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Green))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Red))
+        tf7_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Green))
         tf7_sequence.add_child(Idle())
         
-        #behavior of traffic_light 8
+        #behavior of traffic_light 7
         tf8_sequence = py_trees.composites.Sequence("Traffic_Light8_Sequence")
         others_node.add_child(tf8_sequence)
-        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Red))
-        tf8_sequence.add_child(InTriggerDistanceToLocation(veh4,
-                                                               carla.Location(5.7, 169.9, 0), 4.0))
-        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf11, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf12, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf13, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf14, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(InTriggerDistanceToLocation(self.ego_vehicles[0],
+                                                               carla.Location(-30.9, 131.6, 0), 4.0))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf11, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf12, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf13, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf14, carla.TrafficLightState.Yellow))
         tf8_sequence.add_child(Idle(2))
-        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf11, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf12, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf13, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf14, carla.TrafficLightState.Red))
         tf8_sequence.add_child(Idle(8))
-        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf11, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf12, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf13, carla.TrafficLightState.Yellow))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf14, carla.TrafficLightState.Yellow))
         tf8_sequence.add_child(Idle(2))
-        tf8_sequence.add_child(TrafficLightStateSetter(tf8, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf11, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf12, carla.TrafficLightState.Green))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf13, carla.TrafficLightState.Red))
+        tf8_sequence.add_child(TrafficLightStateSetter(tf14, carla.TrafficLightState.Green))
         tf8_sequence.add_child(Idle())
-        
-        #behavior of traffic_light 9
-        tf9_sequence = py_trees.composites.Sequence("Traffic_Light9_Sequence")
-        others_node.add_child(tf9_sequence)
-        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Green))
-        tf9_sequence.add_child(InTriggerDistanceToLocation(veh4,
-                                                               carla.Location(5.7, 169.9, 0), 4.0))
-        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Yellow))
-        tf9_sequence.add_child(Idle(2))
-        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Red))
-        tf9_sequence.add_child(Idle(8))
-        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Yellow))
-        tf9_sequence.add_child(Idle(2))
-        tf9_sequence.add_child(TrafficLightStateSetter(tf9, carla.TrafficLightState.Green))
-        tf9_sequence.add_child(Idle())
-
-        #behavior of traffic_light 10
-        tf10_sequence = py_trees.composites.Sequence("Traffic_Light10_Sequence")
-        others_node.add_child(tf10_sequence)
-        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Red))
-        tf10_sequence.add_child(InTriggerDistanceToLocation(veh4,
-                                                               carla.Location(5.7, 169.9, 0), 4.0))
-        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Yellow))
-        tf10_sequence.add_child(Idle(2))
-        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Green))
-        tf10_sequence.add_child(Idle(8))
-        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Yellow))
-        tf10_sequence.add_child(Idle(2))
-        tf10_sequence.add_child(TrafficLightStateSetter(tf10, carla.TrafficLightState.Red))
-        tf10_sequence.add_child(Idle())
 
         return others_node
 

@@ -2,7 +2,7 @@ import math
 from typing import List, Tuple, Optional, Dict
 
 from carla import TrafficLight, LaneType, Junction, Waypoint, Actor, TrafficLightState, Vector3D, Location, \
-    GeoLocation, Map, World, Vehicle, ServerSideSensor, Rotation, Walker
+    GeoLocation, Map, World, Vehicle, ServerSideSensor, Rotation, Walker, LandmarkType
 
 from carla_data_classes.DataActor import DataActor
 from scenario_rasterizer import ScenarioSegment, InfrastructureRasterizer
@@ -621,6 +621,45 @@ class WorldHelper(object):
             # Check if the actors' waypoint belongs to the same lane as the given waypoint
             if self.waypoints_are_one_same_lane(nearest_waypoint, lane):
                 actors_on_lane.append(actor)
+        return actors_on_lane
+
+    def get_all_vehicles_for_lane_id(self, lane_id: str) -> List[Actor]:
+        """
+        Returns a list of actors that are located on the given lane id
+        :param lane_id: The lane_id for which the actors are searched
+        :return: List of Actors located on the given lane id
+        """
+        # Get all actors in the scene
+        actors = self.get_vehicles()
+        actors_on_lane = []
+        for actor in actors:
+            # Get nearest waypoint for current actor
+            nearest_waypoint = self.get_nearest_waypoint_for_actor(actor)
+            print(actor.attributes)
+            print(self.get_ad_map_lane_id(nearest_waypoint))
+            # Check if the actors' waypoint belongs to the same lane as the given waypoint
+            if self.get_ad_map_lane_id(nearest_waypoint) == lane_id:
+                actors_on_lane.append(actor)
+        return actors_on_lane
+
+    def get_all_stop_signs_for_lane_id(self, lane_id: str) -> List[Actor]:
+        """
+        Returns a list of Stop and Yield Signs that are located on the given lane id
+        :param lane_id: The lane_id for which the Stop and Yield Signs are searched
+        :return: List of Stop and Yield Signs located on the given lane id
+        """
+        # Get all landmarks of type Stop or Yield Sign in the scene
+        actors = []
+        actors.extend(self._map.get_all_landmarks_of_type(LandmarkType.StopSign))
+        actors.extend(self._map.get_all_landmarks_of_type(LandmarkType.YieldSign))
+        actors_on_lane = []
+        for actor in actors:
+            # Get nearest waypoint for current actor
+            if actor is not None:
+                nearest_waypoint = actor.waypoint
+                # Check if the actors' waypoint belongs to the same lane as the given waypoint
+                if nearest_waypoint is not None and nearest_waypoint.lane_id == lane_id:
+                    actors_on_lane.append(actor)
         return actors_on_lane
 
     def rotate_point(self, point, angle):

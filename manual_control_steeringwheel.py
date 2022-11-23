@@ -685,7 +685,7 @@ class LaneInvasionSensor(object):
             return
         lane_types = set(x.type for x in event.crossed_lane_markings)
         text = ['%r' % str(x).split()[-1] for x in lane_types]
-        self.hud.notification('Crossed line %s' % ' and '.join(text))
+        # self.hud.notification('Crossed line %s' % ' and '.join(text))
 
 # ==============================================================================
 # -- GnssSensor --------------------------------------------------------
@@ -885,7 +885,7 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(5.0)
         # print(client.get_available_maps())
-        # client.load_world('Town03')
+        # client.load_world('Town07')
 
         display = pygame.display.set_mode(
             (args.width, args.height),

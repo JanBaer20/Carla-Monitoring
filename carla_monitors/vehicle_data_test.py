@@ -79,25 +79,29 @@ class VehicleDataTest(Criterion):
         actor_waypoint = self._world_helper.get_nearest_waypoint_for_data_actor(data_ego_vehicle)
         print(actor_waypoint.transform)
         lane_id = self._world_helper.get_ad_map_lane_id(actor_waypoint)
+        lane = self._map_helper.get_lane_for_lane_id(lane_id)
+        # for lane in self._world_helper.get_lanes_for_road(actor_waypoint):
+        #     print(lane.lane_id)
+        #     print(self._world_helper.get_all_actors_for_lane(lane))
 
-        intersection_waypoint = self._world_helper.advance_waypoint_until_junction(actor_waypoint)
-        for wp in intersection_waypoint.next(2.0):
-            print(self._world_helper.get_ad_map_lane_id(wp))
-            print(wp)
+        # intersection_waypoint = self._world_helper.advance_waypoint_until_junction(actor_waypoint)
+        # for wp in intersection_waypoint.next(2.0):
+        #     print(self._world_helper.get_ad_map_lane_id(wp))
+        #     print(wp)
 
-        for ip in intersection_waypoint.next(2.0):
-            if ip.get_junction() is not None:
-                for wp in self._world_helper.get_lanes_for_junction(ip.get_junction()):
-                    # print(self._world_helper.get_ad_map_lane_id(wp))
-                    # print(self._map_helper.get_successor_lanes(self._map_helper.get_lane_for_lane_id(lane_id)))
-                    if self._world_helper.get_ad_map_lane_id(wp) in [x.ad_map_lane_id for x in self._map_helper.get_successor_lanes(self._map_helper.get_lane_for_lane_id(lane_id))]:
-                        print(self._world_helper.get_ad_map_lane_id(wp))
-                        print(wp.next_until_lane_end(0.5)[-1].transform)
-                        # print(intersection_waypoint.transform)
-                        print((wp.next_until_lane_end(0.5)[-1].transform.rotation.yaw - intersection_waypoint.transform.rotation.yaw) % 360)
-                        # print(wp.transform.rotation.yaw - intersection_waypoint.transform.rotation.yaw)
-                        print(self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(self._world_helper.get_ad_map_lane_id(wp))))
-        print(lane_id)
+        # for ip in intersection_waypoint.next(2.0):
+        #     if ip.get_junction() is not None:
+        #         for wp in self._world_helper.get_lanes_for_junction(ip.get_junction()):
+        #             # print(self._world_helper.get_ad_map_lane_id(wp))
+        #             # print(self._map_helper.get_successor_lanes(self._map_helper.get_lane_for_lane_id(lane_id)))
+        #             if self._world_helper.get_ad_map_lane_id(wp) in [x.ad_map_lane_id for x in self._map_helper.get_successor_lanes(self._map_helper.get_lane_for_lane_id(lane_id))]:
+        #                 print(self._world_helper.get_ad_map_lane_id(wp))
+        #                 print(wp.next_until_lane_end(0.5)[-1].transform)
+        #                 # print(intersection_waypoint.transform)
+        #                 print((wp.next_until_lane_end(0.5)[-1].transform.rotation.yaw - intersection_waypoint.transform.rotation.yaw) % 360)
+        #                 # print(wp.transform.rotation.yaw - intersection_waypoint.transform.rotation.yaw)
+        #                 print(self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(self._world_helper.get_ad_map_lane_id(wp))))
+        # print(lane_id)
         # print(self._map_helper.get_lane_for_lane_id(lane_id))
 
         if lane_id > 0:
@@ -113,7 +117,14 @@ class VehicleDataTest(Criterion):
             # for lane in self._map_helper.get_all_lanes_for_intersection(self._map_helper.get_lane_for_lane_id(lane_id)):
             #     print(lane)
             print("Road")
-            print(self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id)))
+            road_id = self._map_helper.get_road_id_for_lane(self._map_helper.get_lane_for_lane_id(lane_id))
+            print(road_id)
+            for lane_id2 in self._map_helper.get_lanes_for_road_id(road_id):
+                turn_lane = self._map_helper.get_lane_for_lane_id(lane_id2)
+                if(lane.direction != turn_lane.direction):
+                    print(turn_lane.direction)
+                    print(turn_lane.id)
+
 
         # The ego vehicle stopped long enough. Set test status
         self.test_status = py_trees.common.Status.FAILURE
