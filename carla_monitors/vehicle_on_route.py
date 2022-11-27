@@ -43,6 +43,16 @@ class VehicleOnRoute(BaseMonitor):
         self._scenario_name = scenario_name
         self.start_time = datetime.datetime.now()
 
+        self._rasterizer = InfrastructureRasterizer()
+        open_drive = world.get_map().to_opendrive()
+        # Analyze blocks for current map
+        logger.info("Analyze blocks for current map.")
+        blocks = self._rasterizer.analyze_map_from_xodr_content(open_drive)
+        logger.info("All blocks have been calculated")
+
+        self._map_helper = MapHelper(self._rasterizer)
+        self._world_helper = WorldHelper(world, self._rasterizer)
+
         self._actor: Vehicle = self.actor
 
         self._waypoints = waypoints

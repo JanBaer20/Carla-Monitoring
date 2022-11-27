@@ -1,2 +1,0 @@
-(carla.Location(24.77, 158.66, 0), "Turn Right"),
-(carla.Location(-2.46, -186.8, 0), "Turn Right")

@@ -1,0 +1,35 @@
+
+ ======= Results of Scenario: PruefungHighwayScenario ---- FAILURE =======
+
+ > Ego vehicles:
+Actor(id=517, type=vehicle.lincoln.mkz_2017); 
+
+ > Other actors:
+Actor(id=518, type=vehicle.ford.mustang); Actor(id=519, type=vehicle.citroen.c3); Actor(id=520, type=vehicle.dodge.charger_police_2020); Actor(id=521, type=vehicle.nissan.patrol); Actor(id=522, type=vehicle.dodge.charger_2020); Actor(id=523, type=vehicle.mercedes.coupe); Actor(id=524, type=vehicle.toyota.prius); Actor(id=525, type=vehicle.seat.leon); Actor(id=526, type=walker.pedestrian.0001); Actor(id=527, type=walker.pedestrian.0020); 
+
+ > Simulation Information
+╒═════════════════════════════════╤═════════════════════╕
+│ Start Time                      │ 2022-11-27 17:15:12 │
+├─────────────────────────────────┼─────────────────────┤
+│ End Time                        │ 2022-11-27 17:15:48 │
+├─────────────────────────────────┼─────────────────────┤
+│ Duration (System Time)          │ 36.15s              │
+├─────────────────────────────────┼─────────────────────┤
+│ Duration (Game Time)            │ 36.13s              │
+├─────────────────────────────────┼─────────────────────┤
+│ Ratio (System Time / Game Time) │ 0.999s              │
+╘═════════════════════════════════╧═════════════════════╛
+
+ > Criteria Information
+╒═══════════════════════════╤══════════════════════════╤════════════════╤══════════════╤════════════════╕
+│ Actor                     │ Criterion                │ Result         │ Actual Value │ Expected Value │
+├───────────────────────────┼──────────────────────────┼────────────────┼──────────────┼────────────────┤
+│ lincoln.mkz_2017 (id=517) │ ReachedRegionTest (Req.) │ SUCCESS        │ 0            │ 0              │
+├───────────────────────────┼──────────────────────────┼────────────────┼──────────────┼────────────────┤
+│ lincoln.mkz_2017 (id=517) │ VehicleOnRoute (Req.)    │ Status.FAILURE │ 0            │                │
+├───────────────────────────┼──────────────────────────┼────────────────┼──────────────┼────────────────┤
+│                           │ Timeout (Req.)           │ SUCCESS        │ 36.13        │ 600            │
+├───────────────────────────┼──────────────────────────┼────────────────┼──────────────┼────────────────┤
+│                           │ GLOBAL RESULT            │ FAILURE        │              │                │
+╘═══════════════════════════╧══════════════════════════╧════════════════╧══════════════╧════════════════╛
+ =========================================================================
