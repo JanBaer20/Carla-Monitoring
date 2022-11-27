@@ -14,6 +14,7 @@ from srunner.scenarios.basic_scenario import BasicScenario
 
 from carla_helpers import ScenarioHelper
 from carla_monitors.monitor_ego_vehicle import MonitorEgoVehicle, NoiseData, NoiseTargetEnum
+from carla_monitors.vehicle_on_route import VehicleOnRoute
 # Initialization of logging
 from carla_noise_generator.normal_noise_generator import NoiseTypeEnum
 
@@ -102,11 +103,94 @@ class PruefungLandScenario(BasicScenario):
         Returns:
              List[Criterion]: List of criterions and monitors for this scenario
         """
+        
+        route = [carla.Location(-197.81, -129.63, 0),
+carla.Location(-197.96, -137.16, 0),
+carla.Location(-198.11, -146.33, 0),
+carla.Location(-198.18, -158.14, 0),
+carla.Location(-198.44, -169.26, 0),
+carla.Location(-198.55, -180.75, 0),
+carla.Location(-198.5, -191.92, 0),
+carla.Location(-198.47, -204.29, 0),
+carla.Location(-198.34, -219.01, 0),
+carla.Location(-196.9, -230.8, 0),
+carla.Location(-190.8, -240.43, 0),
+carla.Location(-180.93, -244.35, 0),
+carla.Location(-169.59, -243.77, 0),
+carla.Location(-157.0, -241.92, 0),
+carla.Location(-145.02, -237.8, 0),
+carla.Location(-134.38, -230.18, 0),
+carla.Location(-126.47, -220.84, 0),
+carla.Location(-118.54, -213.0, 0),
+carla.Location(-108.39, -207.84, 0),
+carla.Location(-98.55, -205.68, 0),
+carla.Location(-85.96, -207.54, 0),
+carla.Location(-75.25, -213.82, 0),
+carla.Location(-67.14, -224.14, 0),
+carla.Location(-61.13, -232.95, 0),
+carla.Location(-51.51, -240.34, 0),
+carla.Location(-40.26, -243.41, 0),
+carla.Location(-29.94, -243.1, 0),
+carla.Location(-20.17, -241.28, 0),
+carla.Location(-9.0, -239.27, 0),
+carla.Location(0.74, -239.06, 0),
+carla.Location(10.32, -237.88, 0),
+carla.Location(20.6, -233.89, 0),
+carla.Location(28.82, -227.95, 0),
+carla.Location(34.57, -220.47, 0),
+carla.Location(37.97, -210.17, 0),
+carla.Location(39.54, -199.03, 0),
+carla.Location(40.69, -187.19, 0),
+carla.Location(41.61, -175.6, 0),
+carla.Location(43.25, -164.42, 0),
+carla.Location(47.04, -154.62, 0),
+carla.Location(53.03, -145.31, 0),
+carla.Location(58.91, -135.74, 0),
+carla.Location(62.31, -126.49, 0),
+carla.Location(63.05, -115.63, 0),
+carla.Location(61.28, -104.36, 0),
+carla.Location(59.14, -92.04, 0),
+carla.Location(57.4, -79.67, 0),
+carla.Location(56.12, -67.69, 0),
+carla.Location(57.46, -55.13, 0),
+carla.Location(63.38, -44.91, 0),
+carla.Location(70.1, -36.08, 0),
+carla.Location(73.06, -27.82, 0),
+carla.Location(72.63, -20.26, 0),
+carla.Location(69.97, -11.81, 0),
+carla.Location(65.09, -5.34, 0),
+carla.Location(58.52, -3.61, 0),
+carla.Location(51.48, -3.54, 0),
+carla.Location(43.11, -3.85, 0),
+carla.Location(35.33, -4.06, 0),
+carla.Location(27.68, -4.67, 0),
+carla.Location(19.72, -6.15, 0),
+carla.Location(11.58, -6.49, 0),
+carla.Location(4.38, -7.45, 0),
+carla.Location(-0.61, -12.43, 0),
+carla.Location(-1.54, -19.68, 0),
+carla.Location(-1.66, -26.91, 0),
+carla.Location(-1.48, -34.29, 0),
+carla.Location(-1.39, -42.12, 0),
+carla.Location(-1.11, -49.57, 0),
+carla.Location(-1.1, -56.76, 0),
+carla.Location(-3.87, -62.52, 0),
+carla.Location(-10.05, -64.75, 0),
+carla.Location(-16.04, -64.92, 0),
+carla.Location(-22.52, -65.26, 0),
+carla.Location(-29.55, -65.6, 0),
+carla.Location(-36.9, -65.65, 0),
+carla.Location(-43.82, -65.62, 0),
+carla.Location(-50.52, -66.22, 0)]
+
+        turningPoints = [(carla.Location(73.96, -19.27, 0), "Turn Right"),
+(carla.Location(31.1, -4.44, 0), "Turn Right"),
+(carla.Location(-1.69, -34.48, 0), "Turn Left")]
+        
         # final location for scneario end
-        # unfreeze the vehicles to start moving but maintain start position throughout initialization
         loc = carla.Location(-55.8, -70.2, 0)
         dist = 5.0
-        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist)]
+        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist), VehicleOnRoute(self.ego_vehicles[0], self._world, route, turningPoints, False)]
         self.unfreezeVehicles()
         return criteria
 

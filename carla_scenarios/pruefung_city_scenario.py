@@ -14,6 +14,7 @@ from srunner.scenarios.basic_scenario import BasicScenario
 
 from carla_helpers import ScenarioHelper
 from carla_monitors.monitor_ego_vehicle import MonitorEgoVehicle, NoiseData, NoiseTargetEnum
+from carla_monitors.vehicle_on_route import VehicleOnRoute
 # Initialization of logging
 from carla_noise_generator.normal_noise_generator import NoiseTypeEnum
 
@@ -102,11 +103,93 @@ class PruefungCityScenario(BasicScenario):
         Returns:
              List[Criterion]: List of criterions and monitors for this scenario
         """
+        route = [carla.Location(115.53, -189.43, 0),
+carla.Location(123.53, -189.43, 0),
+carla.Location(131.14, -190.03, 0),
+carla.Location(139.22, -190.16, 0),
+carla.Location(149.0, -190.96, 0),
+carla.Location(158.77, -193.15, 0),
+carla.Location(169.43, -194.45, 0),
+carla.Location(179.76, -194.43, 0),
+carla.Location(191.08, -194.08, 0),
+carla.Location(201.82, -193.22, 0),
+carla.Location(212.76, -190.09, 0),
+carla.Location(221.57, -183.79, 0),
+carla.Location(227.08, -174.27, 0),
+carla.Location(230.35, -164.55, 0),
+carla.Location(233.05, -152.56, 0),
+carla.Location(234.22, -139.24, 0),
+carla.Location(234.38, -125.81, 0),
+carla.Location(234.37, -113.54, 0),
+carla.Location(234.13, -100.85, 0),
+carla.Location(233.76, -89.04, 0),
+carla.Location(233.48, -76.03, 0),
+carla.Location(233.27, -63.69, 0),
+carla.Location(232.77, -50.39, 0),
+carla.Location(232.44, -37.36, 0),
+carla.Location(232.28, -24.46, 0),
+carla.Location(231.97, -11.64, 0),
+carla.Location(231.68, 0.37, 0),
+carla.Location(231.34, 12.19, 0),
+carla.Location(231.07, 24.6, 0),
+carla.Location(230.74, 37.56, 0),
+carla.Location(230.55, 49.42, 0),
+carla.Location(230.45, 60.72, 0),
+carla.Location(230.19, 73.08, 0),
+carla.Location(229.89, 84.94, 0),
+carla.Location(229.62, 97.44, 0),
+carla.Location(229.39, 109.53, 0),
+carla.Location(229.12, 122.14, 0),
+carla.Location(228.57, 133.57, 0),
+carla.Location(227.21, 145.48, 0),
+carla.Location(224.07, 156.33, 0),
+carla.Location(218.36, 166.24, 0),
+carla.Location(210.0, 174.58, 0),
+carla.Location(200.51, 180.71, 0),
+carla.Location(189.89, 185.39, 0),
+carla.Location(178.15, 189.31, 0),
+carla.Location(167.01, 191.59, 0),
+carla.Location(155.11, 192.92, 0),
+carla.Location(143.77, 193.49, 0),
+carla.Location(130.7, 193.35, 0),
+carla.Location(117.32, 193.35, 0),
+carla.Location(103.39, 193.5, 0),
+carla.Location(90.14, 193.24, 0),
+carla.Location(76.55, 193.18, 0),
+carla.Location(62.51, 193.36, 0),
+carla.Location(48.59, 193.75, 0),
+carla.Location(34.5, 193.76, 0),
+carla.Location(21.89, 193.44, 0),
+carla.Location(13.0, 191.89, 0),
+carla.Location(7.07, 186.15, 0),
+carla.Location(5.07, 178.17, 0),
+carla.Location(3.96, 169.79, 0),
+carla.Location(2.9, 160.67, 0),
+carla.Location(2.06, 150.45, 0),
+carla.Location(0.62, 140.2, 0),
+carla.Location(-4.61, 132.63, 0),
+carla.Location(-13.26, 129.38, 0),
+carla.Location(-22.67, 129.86, 0),
+carla.Location(-32.9, 131.22, 0),
+carla.Location(-43.55, 131.66, 0),
+carla.Location(-54.21, 131.93, 0),
+carla.Location(-64.42, 130.75, 0),
+carla.Location(-72.12, 125.27, 0),
+carla.Location(-74.51, 116.76, 0),
+carla.Location(-73.69, 107.87, 0),
+carla.Location(-73.13, 98.31, 0),
+carla.Location(-73.24, 90.04, 0),
+carla.Location(-73.42, 83.08, 0),
+carla.Location(-73.31, 77.25, 0)]
+        
+        turningPoints = [(carla.Location(34.27, 193.43, 0), "Turn Right"),
+(carla.Location(2.59, 174.4, 0), "Turn Left"),
+(carla.Location(-36.93, 130.59, 0), "Turn Right")]
+        
         # final location for scneario end
-        # unfreeze the vehicles to start moving but maintain start position throughout initialization
         loc = carla.Location(-70.8, 88.8, 0)
         dist = 5.0
-        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist)]
+        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist), VehicleOnRoute(self.ego_vehicles[0], self._world, route, turningPoints, False)]
         self.unfreezeVehicles()
         return criteria
 

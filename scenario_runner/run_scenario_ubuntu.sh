@@ -6,9 +6,9 @@ THIS_DIRECTORY=`dirname $THIS_FILE`
 source $THIS_DIRECTORY/setup_env_ubuntu.sh
 
 # prefer environment setting, but fallback to MonitorSurroundings in case env is not set
-[[ -z "${SCENARIO_NAME}" ]] && export SCENARIO_NAME="PruefungTestScenario"
+[[ -z "${SCENARIO_NAME}" ]] && export SCENARIO_NAME="PruefungHighwayScenario"
 echo "SCENARIO_NAME: $SCENARIO_NAME"
-[[ -z "${SCENARIO_FILE}" ]] && export SCENARIO_FILE="pruefung_test_scenario"
+[[ -z "${SCENARIO_FILE}" ]] && export SCENARIO_FILE="pruefung_highway_scenario"
 echo "SCENARIO_FILE: $SCENARIO_FILE"
 
 # start carla
@@ -32,7 +32,6 @@ echo "SCENARIO_FILE: $SCENARIO_FILE"
    --outputDir=. \
 	 --host=$CARLA_HOSTNAME \
    --additionalScenario="${SCENARIO_DIR}/${SCENARIO_FILE}.py" \
-   --debug \
    --configFile="${SCENARIO_DIR}/${SCENARIO_NAME}.xml" 
 
 

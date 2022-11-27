@@ -14,6 +14,7 @@ from srunner.scenarios.basic_scenario import BasicScenario
 
 from carla_helpers import ScenarioHelper
 from carla_monitors.monitor_ego_vehicle import MonitorEgoVehicle, NoiseData, NoiseTargetEnum
+from carla_monitors.vehicle_on_route import VehicleOnRoute
 # Initialization of logging
 from carla_noise_generator.normal_noise_generator import NoiseTypeEnum
 
@@ -102,11 +103,90 @@ class PruefungHighwayScenario(BasicScenario):
         Returns:
              List[Criterion]: List of criterions and monitors for this scenario
         """
+
+        route = [carla.Location(24.84, 109.99, 0),
+carla.Location(24.82, 115.53, 0),
+carla.Location(24.59, 125.73, 0),
+carla.Location(24.52, 135.59, 0),
+carla.Location(24.55, 144.62, 0),
+carla.Location(24.54, 152.9, 0),
+carla.Location(24.61, 163.07, 0),
+carla.Location(24.65, 173.39, 0),
+carla.Location(21.64, 183.52, 0),
+carla.Location(12.57, 188.91, 0),
+carla.Location(0.82, 189.94, 0),
+carla.Location(-11.82, 190.42, 0),
+carla.Location(-25.77, 190.69, 0),
+carla.Location(-40.04, 190.83, 0),
+carla.Location(-54.58, 190.94, 0),
+carla.Location(-68.47, 191.03, 0),
+carla.Location(-84.02, 191.18, 0),
+carla.Location(-99.06, 191.35, 0),
+carla.Location(-114.97, 191.43, 0),
+carla.Location(-133.05, 191.34, 0),
+carla.Location(-151.14, 190.19, 0),
+carla.Location(-169.71, 185.99, 0),
+carla.Location(-187.7, 177.88, 0),
+carla.Location(-203.74, 165.77, 0),
+carla.Location(-216.2, 149.68, 0),
+carla.Location(-224.76, 132.08, 0),
+carla.Location(-229.42, 112.85, 0),
+carla.Location(-229.76, 91.63, 0),
+carla.Location(-229.75, 70.64, 0),
+carla.Location(-229.24, 49.95, 0),
+carla.Location(-228.99, 29.3, 0),
+carla.Location(-228.81, 9.69, 0),
+carla.Location(-228.62, -9.72, 0),
+carla.Location(-228.69, -28.08, 0),
+carla.Location(-229.18, -45.45, 0),
+carla.Location(-229.66, -62.44, 0),
+carla.Location(-230.12, -78.79, 0),
+carla.Location(-230.36, -94.63, 0),
+carla.Location(-229.33, -111.86, 0),
+carla.Location(-225.53, -127.79, 0),
+carla.Location(-218.46, -144.05, 0),
+carla.Location(-209.74, -156.95, 0),
+carla.Location(-198.78, -167.81, 0),
+carla.Location(-185.81, -177.11, 0),
+carla.Location(-171.7, -184.03, 0),
+carla.Location(-158.2, -187.94, 0),
+carla.Location(-142.19, -190.1, 0),
+carla.Location(-129.02, -190.58, 0),
+carla.Location(-114.12, -190.68, 0),
+carla.Location(-99.53, -190.71, 0),
+carla.Location(-84.7, -190.48, 0),
+carla.Location(-70.47, -190.48, 0),
+carla.Location(-55.11, -190.53, 0),
+carla.Location(-39.13, -190.57, 0),
+carla.Location(-23.54, -190.63, 0),
+carla.Location(-8.68, -190.62, 0),
+carla.Location(4.18, -190.13, 0),
+carla.Location(14.77, -187.94, 0),
+carla.Location(21.65, -184.9, 0),
+carla.Location(26.55, -180.45, 0),
+carla.Location(28.95, -173.89, 0),
+carla.Location(28.69, -166.26, 0),
+carla.Location(28.0, -158.14, 0),
+carla.Location(27.68, -149.38, 0),
+carla.Location(27.57, -140.01, 0),
+carla.Location(27.42, -131.01, 0),
+carla.Location(27.27, -121.9, 0),
+carla.Location(27.07, -111.36, 0),
+carla.Location(26.87, -100.46, 0),
+carla.Location(26.6, -89.72, 0),
+carla.Location(26.29, -79.15, 0),
+carla.Location(25.83, -68.46, 0),
+carla.Location(25.37, -57.37, 0),
+carla.Location(24.97, -48.19, 0)]
+        
+        turningPoints = [(carla.Location(24.77, 158.66, 0), "Turn Right"),
+(carla.Location(-2.46, -186.8, 0), "Turn Right")]
+
         # final location for scneario end
         # unfreeze the vehicles to start moving but maintain start position throughout initialization
         loc = carla.Location(25.6, -39.9, 0)
         dist = 4.0
-        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist)]
+        criteria = [ReachedRegionTest(self.ego_vehicles[0], loc.x - dist, loc.x + dist, loc.y - dist, loc.y + dist), VehicleOnRoute(self.ego_vehicles[0], self._world, route, turningPoints, False)]
         self.unfreezeVehicles()
         return criteria
 

@@ -443,6 +443,9 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 12 if os.name == 'nt' else 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
+        self._violations = FadingText(font, (width/2, 40), (width/4, height - 100))
+        font = pygame.font.Font(pygame.font.get_default_font(), 30)
+        self._turns = FadingText(font, (width/4, 60), ((width/8)*3, 200))
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame = 0
@@ -459,6 +462,8 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
+        self._violations.tick(world, clock)
+        self._turns.tick(world, clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -522,6 +527,12 @@ class HUD(object):
     def notification(self, text, seconds=2.0):
         self._notifications.set_text(text, seconds=seconds)
 
+    def violation(self, text, seconds=2.0):
+        self._violations.set_text(text, seconds=seconds)
+
+    def turn(self, text, seconds=2.0):
+        self._turns.set_text(text, seconds=seconds)
+
     def error(self, text):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
@@ -561,6 +572,8 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
+        self._violations.render(display)
+        self._turns.render(display)
         self.help.render(display)
 
 
@@ -915,8 +928,12 @@ def game_loop(args):
                         readable.remove(rs)
                         rs.close()
                     else:
-                        print('\r{}:'.format(rs.getpeername()),data)
-                        hud.notification(f'Broke rule {data.decode()}')
+                        if data.decode().startswith("Turn"):
+                            print("Turn detected")
+                            hud.turn(data.decode())
+                        else:
+                            print('\r{}:'.format(rs.getpeername()),data)
+                            hud.violation(f'Broke rule {data.decode()}')
                         
             clock.tick_busy_loop(60)
             if controller.parse_events(world, clock):
